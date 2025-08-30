@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uzdevumu pārvaldes sistēma</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: #4CAF50;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .view {
+            display: none;
+            padding: 30px;
+            min-height: 500px;
+        }
+
+        .active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+        }
+
+        .btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background: #f44336;
+        }
+
+        .btn-secondary:hover {
+            background: #d32f2f;
+        }
+
+        .home-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .home-btn {
+            padding: 20px 40px;
+            font-size: 1.3rem;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        .time-inputs {
+            display: flex;
+            gap: 15px;
+        }
+
+        .time-inputs > div {
+            flex: 1;
+        }
+
+        .traffic-light {
+            width: 120px;
+            height: 300px;
+            background-color: #333;
+            border-radius: 15px;
+            margin: 20px auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .light {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #444;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .light:hover {
+            transform: scale(1.05);
+        }
+
+        .red.active { background-color: #f44336; box-shadow: 0 0 25px #f44336; }
+        .yellow.active { background-color: #ffeb3b; box-shadow: 0 0 25px #ffeb3b; }
+        .green.active { background-color: #4CAF50; box-shadow: 0 0 25px #4CAF50; }
+
+        .timer {
+            font-size: 3rem;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #333;
+            font-family: monospace;
+        }
+
+        .student-list {
+            margin-top: 30px;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+
+        .student-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+
+        .student-item:hover {
+            background: #f9f9f9;
+        }
+
+        .student-info {
+            flex: 1;
+        }
+
+        .student-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .student-time {
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        .student-traffic-light {
+            width: 70px;
+            height: 180px;
+            background-color: #333;
+            border-radius: 10px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .student-light {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: #555;
+        }
+
+        .student-light.active { box-shadow: 0 0 15px #fff; }
+
+        .task-info {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .task-description {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            background: #4CAF50;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .response-status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .response-status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .response-status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .instructions {
+            text-align: center;
+            margin-top: 20px;
+            color: #555;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .home-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .time-inputs {
+                flex-direction: column;
+            }
+            
+            .student-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .traffic-light {
+                width: 100px;
+                height: 250px;
+            }
+            
+            .light {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🚦</div>
+            <h1>Uzdevumu pārvaldes sistēma</h1>
+            <p>Skolotājiem un skolēniem</p>
+        </header>
+
+        <!-- Sākuma lapa -->
+        <div id="home-view" class="view active">
+            <div style="text-align: center; margin-top: 30px;">
+                <h2>Laipni lūdzam uzdevumu pārvaldes sistēmā!</h2>
+                <p>Izvēlieties, vai vēlaties pieslēgties kā skolēns vai skolotājs</p>
+                
+                <div class="home-buttons">
+                    <button class="btn home-btn" onclick="showView('student-view')">Skolēns</button>
+                    <button class="btn home-btn" onclick="showTeacherAuth()">Skolotājs</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skolotāja autentifikācija -->
+        <div id="teacher-auth" class="view">
+            <div style="max-width: 400px; margin: 0 auto;">
+                <h2 style="text-align: center; margin-bottom: 30px;">Skolotāja pieslēgšanās</h2>
+                
+                <div class="form-group">
+                    <label for="teacher-password">Parole:</label>
+                    <input type="password" id="teacher-password" placeholder="Ievadiet paroli">
+                </div>
+                
+                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 30px;">
+                    <button class="btn" onclick="checkTeacherPassword()">Pieslēgties</button>
+                    <button class="btn btn-secondary" onclick="showView('home-view')">Atpakaļ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skolotāja lapa -->
+        <div id="teacher-view" class="view">
+            <h2 style="text-align: center;">Skolotāja panelis</h2>
+            
+            <div class="task-creation" style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <h3>Izveidot jaunu uzdevumu</h3>
+                
+                <div class="form-group">
+                    <label for="task-description">Uzdevuma apraksts:</label>
+                    <textarea id="task-description" placeholder="Aprakstiet uzdevumu skolēniem..." rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Uzdevuma izpildes laiks:</label>
+                    <div class="time-inputs">
+                        <div>
+                            <label for="task-minutes">Minūtes:</label>
+                            <input type="number" id="task-minutes" min="0" value="5">
+                        </div>
+                        <div>
+                            <label for="task-seconds">Sekundes:</label>
+                            <input type="number" id="task-seconds" min="0" max="59" value="0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="btn" onclick="startTask()">Sākt uzdevumu</button>
+                </div>
+            </div>
+            
+            <div class="student-list">
+                <h3>Skolēnu atbildes</h3>
+                <div id="students-container">
+                    <p id="no-students-message">Vēl nav saņemtas nevienas atbildes no skolēniem.</p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-secondary" onclick="showView('home-view')">Atpakaļ uz sākumu</button>
+            </div>
+        </div>
+
+        <!-- Skolēna lapa -->
+        <div id="student-view" class="view">
+            <h2 style="text-align: center;">Skolēna panelis</h2>
+            
+            <div id="task-info" class="task-info">
+                <p>Uzdevums vēl nav sācies. Lūdzu, gaidiet skolotāja norādījumus.</p>
+            </div>
+            
+            <div id="student-input" style="display: none;">
+                <div class="form-group">
+                    <label for="student-name">Tavs vārds:</label>
+                    <input type="text" id="student-name" placeholder="Ievadi savu vārdu">
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="btn" onclick="startStudentTask()">Sākt izpildi</button>
+                </div>
+            </div>
+            
+            <div id="student-task" style="display: none;">
+                <div class="timer" id="student-timer">05:00</div>
+                
+                <div class="traffic-light">
+                    <div class="light red" onclick="studentResponse('red')"></div>
+                    <div class="light yellow" onclick="studentResponse('yellow')"></div>
+                    <div class="light green" onclick="studentResponse('green')"></div>
+                </div>
+                
+                <p class="instructions">Nospied uz vienu no luksofora gaismām, lai parādītu savu atbildi!</p>
+                
+                <div id="response-status" class="response-status pending">
+                    Vēl neesat nosūtījis atbildi
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-secondary" onclick="showView('home-view')">Atpakaļ uz sākumu</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Globālie mainīgie
+        let currentTask = null;
+        let students = [];
+        let teacherPassword = "Priedaine";
+        let studentTimerInterval = null;
+        let teacherUpdateInterval = null;
+
+        // Skatu pārvaldība
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(viewId).classList.add('active');
+            
+            // Notīrām skolēna ievades laukus
+            if (viewId === 'student-view') {
+                document.getElementById('student-name').value = '';
+                document.getElementById('student-input').style.display = 'none';
+                document.getElementById('student-task').style.display = 'none';
+                document.getElementById('response-status').className = 'response-status pending';
+                document.getElementById('response-status').textContent = 'Vēl neesat nosūtījis atbildi';
+                checkForTask();
+            }
+            
+            // Sākam skolotāja skata atjaunināšanu
+            if (viewId === 'teacher-view') {
+                updateTeacherView();
+                if (teacherUpdateInterval) {
+                    clearInterval(teacherUpdateInterval);
+                }
+                teacherUpdateInterval = setInterval(updateTeacherView, 1000);
+            } else {
+                if (teacherUpdateInterval) {
+                    clearInterval(teacherUpdateInterval);
+                    teacherUpdateInterval = null;
+                }
+            }
+        }
+
+        function showTeacherAuth() {
+            showView('teacher-auth');
+            document.getElementById('teacher-password').value = '';
+        }
+
+        function checkTeacherPassword() {
+            const password = document.getElementById('teacher-password').value;
+            if (password === teacherPassword) {
+                showView('teacher-view');
+                showNotification('Pieslēgšanās veiksmīga!');
+            } else {
+                showNotification('Nepareiza parole!', 'error');
+            }
+        }
+
+        // Paziņojumu sistēma
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.background = type === 'success' ? '#4CAF50' : '#f44336';
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Uzdevuma izveide un sākšana
+        function startTask() {
+            const description = document.getElementById('task-description').value;
+            const minutes = parseInt(document.getElementById('task-minutes').value);
+            const seconds = parseInt(document.getElementById('task-seconds').value);
+            
+            if (!description) {
+                showNotification('Lūdzu, ievadiet uzdevuma aprakstu!', 'error');
+                return;
+            }
+            
+            currentTask = {
+                description,
+                totalTime: minutes * 60 + seconds,
+                timeLeft: minutes * 60 + seconds,
+                status: 'active',
+                startTime: new Date()
+            };
+            
+            // Notificēt skolēnus par jaunu uzdevumu
+            if (typeof(Storage) !== "undefined") {
+                localStorage.setItem('currentTask', JSON.stringify(currentTask));
+                localStorage.removeItem('studentResponses');
+            }
+            
+            // Notīrām iepriekšējos skolēnus
+            students = [];
+            updateTeacherView();
+            
+            showNotification('Uzdevums ir sācies! Skolēni tagad to redz.');
+        }
+
+        // Skolēna funkcionalitāte
+        function checkForTask() {
+            if (typeof(Storage) !== "undefined") {
+                const taskJson = localStorage.getItem('currentTask');
+                if (taskJson) {
+                    const task = JSON.parse(taskJson);
+                    if (task.status === 'active') {
+                        document.getElementById('task-info').innerHTML = `
+                            <h3>${task.description}</h3>
+                            <p>Atlikušais laiks: ${formatTime(task.timeLeft)}</p>
+                        `;
+                        document.getElementById('student-input').style.display = 'block';
+                        return true;
+                    }
+                }
+            }
+            
+            document.getElementById('task-info').innerHTML = '<p>Uzdevums vēl nav sācies. Lūdzu, gaidiet skolotāja norādījumus.</p>';
+            return false;
+        }
+
+        function startStudentTask() {
+            const studentName = document.getElementById('student-name').value;
+            if (!studentName) {
+                showNotification('Lūdzu, ievadi savu vārdu!', 'error');
+                return;
+            }
+            
+            document.getElementById('student-input').style.display = 'none';
+            document.getElementById('student-task').style.display = 'block';
+            
+            // Saglabāt skolēna vārdu
+            if (typeof(Storage) !== "undefined") {
+                localStorage.setItem('currentStudent', studentName);
+            }
+            
+            // Sākt atpakaļskaiti
+            startCountdown();
+        }
+
+        function startCountdown() {
+            if (typeof(Storage) !== "undefined") {
+                const taskJson = localStorage.getItem('currentTask');
+                if (taskJson) {
+                    const task = JSON.parse(taskJson);
+                    let timeLeft = task.timeLeft;
+                    
+                    // Notīrām iepriekšējo taimeri
+                    if (studentTimerInterval) {
+                        clearInterval(studentTimerInterval);
+                    }
+                    
+                    studentTimerInterval = setInterval(() => {
+                        timeLeft--;
+                        
+                        document.getElementById('student-timer').textContent = formatTime(timeLeft);
+                        
+                        if (timeLeft <= 0) {
+                            clearInterval(studentTimerInterval);
+                            // Automātiski nosūtīt sarkano gaismu, ja laiks beidzies
+                            studentResponse('red', true);
+                        }
+                    }, 1000);
+                }
+            }
+        }
+
+        function studentResponse(color, auto = false) {
+            const studentName = localStorage.getItem('currentStudent') || 'Anonīms skolēns';
+            const responseTime = new Date();
+            
+            // Atjaunot skolotāja skatu ar jauno atbildi
+            if (typeof(Storage) !== "undefined") {
+                let responses = [];
+                const responsesJson = localStorage.getItem('studentResponses');
+                if (responsesJson) {
+                    responses = JSON.parse(responsesJson);
+                }
+                
+                // Pārbaudīt, vai skolēns jau nav atbildējis
+                const existingIndex = responses.findIndex(r => r.studentName === studentName);
+                
+                const response = {
+                    studentName,
+                    color,
+                    time: responseTime.toLocaleTimeString(),
+                    auto
+                };
+                
+                if (existingIndex !== -1) {
+                    responses[existingIndex] = response;
+                } else {
+                    responses.push(response);
+                }
+                
+                localStorage.setItem('studentResponses', JSON.stringify(responses));
+            }
+            
+            // Atspoguļot skolēna izvēli
+            document.querySelectorAll('.light').forEach(light => {
+                light.classList.remove('active');
+            });
+            document.querySelector(`.light.${color}`).classList.add('active');
+            
+            // Atjaunot statusa ziņojumu
+            const statusElement = document.getElementById('response-status');
+            statusElement.className = 'response-status completed';
+            statusElement.textContent = `Nosūtīta atbilde: ${getColorName(color)} gaisma (${responseTime.toLocaleTimeString()})`;
+            
+            if (!auto) {
+                showNotification(`Tu izvēlējies ${getColorName(color)} gaismu! Tavs atbildes laiks: ${responseTime.toLocaleTimeString()}`);
+            } else {
+                showNotification('Laiks iztecējis! Automātiski tika izvēlēta sarkanā gaisma.', 'error');
+            }
+            
+            // Apturēt taimeri
+            if (studentTimerInterval) {
+                clearInterval(studentTimerInterval);
+            }
+        }
+
+        function getColorName(color) {
+            const colors = {
+                'red': 'sarkano',
+                'yellow': 'dzelteno',
+                'green': 'zaļo'
+            };
+            return colors[color] || color;
+        }
+
+        // Palīgfunkcijas
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Skolotāja skata atjaunināšana
+        function updateTeacherView() {
+            if (document.getElementById('teacher-view').classList.contains('active')) {
+                const studentsContainer = document.getElementById('students-container');
+                const noStudentsMessage = document.getElementById('no-students-message');
+                
+                if (typeof(Storage) !== "undefined") {
+                    const responsesJson = localStorage.getItem('studentResponses');
+                    if (responsesJson) {
+                        const responses = JSON.parse(responsesJson);
+                        
+                        if (responses.length > 0) {
+                            noStudentsMessage.style.display = 'none';
+                            studentsContainer.innerHTML = '';
+                            
+                            responses.forEach(response => {
+                                const studentEl = document.createElement('div');
+                                studentEl.className = 'student-item';
+                                
+                                studentEl.innerHTML = `
+                                    <div class="student-info">
+                                        <div class="student-name">${response.studentName}</div>
+                                        <div class="student-time">Atbildes laiks: ${response.time} ${response.auto ? '(automātiski)' : ''}</div>
+                                    </div>
+                                    <div class="student-traffic-light">
+                                        <div class="student-light red ${response.color === 'red' ? 'active' : ''}"></div>
+                                        <div class="student-light yellow ${response.color === 'yellow' ? 'active' : ''}"></div>
+                                        <div class="student-light green ${response.color === 'green' ? 'active' : ''}"></div>
+                                    </div>
+                                `;
+                                
+                                studentsContainer.appendChild(studentEl);
+                            });
+                        } else {
+                            noStudentsMessage.style.display = 'block';
+                            studentsContainer.innerHTML = '';
+                        }
+                    } else {
+                        noStudentsMessage.style.display = 'block';
+                        studentsContainer.innerHTML = '';
+                    }
+                }
+            }
+        }
+
+        // Pārbaudīt uzdevumu statusu skolēna skatā
+        setInterval(() => {
+            if (document.getElementById('student-view').classList.contains('active')) {
+                checkForTask();
+            }
+        }, 2000);
+
+        // Inicializācija
+        window.onload = function() {
+            showView('home-view');
+        };
+    </script>
+</body>
+</html>
