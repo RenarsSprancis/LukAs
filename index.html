@@ -238,7 +238,9 @@
             background-color: #555;
         }
 
-        .student-light.active { box-shadow: 0 0 15px #fff; }
+        .student-light.red.active { background-color: #f44336; box-shadow: 0 0 15px #f44336; }
+        .student-light.yellow.active { background-color: #ffeb3b; box-shadow: 0 0 15px #ffeb3b; }
+        .student-light.green.active { background-color: #4CAF50; box-shadow: 0 0 15px #4CAF50; }
 
         .task-info {
             background: #f9f9f9;
@@ -270,6 +272,10 @@
 
         .notification.show {
             transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #f44336;
         }
 
         .response-status {
@@ -452,7 +458,6 @@
     <script>
         // Globālie mainīgie
         let currentTask = null;
-        let students = [];
         let teacherPassword = "Priedaine";
         let studentTimerInterval = null;
         let teacherUpdateInterval = null;
@@ -508,7 +513,7 @@
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             notification.textContent = message;
-            notification.style.background = type === 'success' ? '#4CAF50' : '#f44336';
+            notification.className = 'notification' + (type === 'error' ? ' error' : '');
             notification.classList.add('show');
             
             setTimeout(() => {
@@ -540,10 +545,6 @@
                 localStorage.setItem('currentTask', JSON.stringify(currentTask));
                 localStorage.removeItem('studentResponses');
             }
-            
-            // Notīrām iepriekšējos skolēnus
-            students = [];
-            updateTeacherView();
             
             showNotification('Uzdevums ir sācies! Skolēni tagad to redz.');
         }
