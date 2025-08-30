@@ -207,11 +207,13 @@
 
         .student-info {
             flex: 1;
+            text-align: left;
         }
 
         .student-name {
             font-weight: bold;
             font-size: 1.1rem;
+            margin-bottom: 5px;
         }
 
         .student-time {
@@ -303,6 +305,13 @@
             font-style: italic;
         }
 
+        .last-update {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #777;
+            margin-top: 10px;
+        }
+
         @media (max-width: 768px) {
             .home-buttons {
                 flex-direction: column;
@@ -317,6 +326,10 @@
                 flex-direction: column;
                 text-align: center;
                 gap: 15px;
+            }
+            
+            .student-info {
+                text-align: center;
             }
             
             .traffic-light {
@@ -405,6 +418,7 @@
                 <div id="students-container">
                     <p id="no-students-message">Vēl nav saņemtas nevienas atbildes no skolēniem.</p>
                 </div>
+                <div id="last-update-teacher" class="last-update"></div>
             </div>
             
             <div style="text-align: center; margin-top: 30px;">
@@ -485,7 +499,7 @@
                 if (teacherUpdateInterval) {
                     clearInterval(teacherUpdateInterval);
                 }
-                teacherUpdateInterval = setInterval(updateTeacherView, 1000);
+                teacherUpdateInterval = setInterval(updateTeacherView, 5000); // Atjaunināt ik pēc 5 sekundēm
             } else {
                 if (teacherUpdateInterval) {
                     clearInterval(teacherUpdateInterval);
@@ -543,8 +557,11 @@
             // Notificēt skolēnus par jaunu uzdevumu
             if (typeof(Storage) !== "undefined") {
                 localStorage.setItem('currentTask', JSON.stringify(currentTask));
-                localStorage.removeItem('studentResponses');
+                localStorage.removeItem('studentResponses'); // Notīram iepriekšējos skolēnu atbilžu datus
             }
+            
+            // Notīram skolēnu sarakstu skolotāja skatā
+            updateTeacherView();
             
             showNotification('Uzdevums ir sācies! Skolēni tagad to redz.');
         }
@@ -691,6 +708,10 @@
             if (document.getElementById('teacher-view').classList.contains('active')) {
                 const studentsContainer = document.getElementById('students-container');
                 const noStudentsMessage = document.getElementById('no-students-message');
+                const lastUpdateElement = document.getElementById('last-update-teacher');
+                
+                // Atjaunināt pēdējā atjauninājuma laiku
+                lastUpdateElement.textContent = `Pēdējais atjauninājums: ${new Date().toLocaleTimeString()}`;
                 
                 if (typeof(Storage) !== "undefined") {
                     const responsesJson = localStorage.getItem('studentResponses');
